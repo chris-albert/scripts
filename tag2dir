@@ -1,0 +1,52 @@
+#!/bin/bash
+#this is a script to rename the folder containing mp3 taged files to the tag
+
+path=$1
+destination_path=$2
+echo 'Processing: ' "$path"
+#so if we dont have any .mp3 it wont try to loop over that
+shopt -s nullglob
+complete=false
+process=false
+for file in "$path"/*.mp3
+do
+	complete=true
+	info=`mp3info -p "%a|%l|%t" "$file" 2>/dev/null`
+	if [[ "$info" != '||' ]]; then
+		process=true
+		artist=`echo $info | cut -d"|" -f1`
+		album=`echo $info | cut -d"|" -f2`
+		track=`echo $info | cut -d"|" -f3`
+		temp_artist="$artist.temp"
+		#create folders
+		if [[ ! -d "$path/../$temp_artist" ]]; then
+			mkdir "$path/../$temp_artist"
+		fi
+		if [[ ! -d "$path/../$temp_artist/$album" ]]; then
+			mkdir "$path/../$temp_artist/$album"
+		fi
+		#move files to new folders
+		if [[ ! -f "$path/../$temp_artist/$album/$file" ]]; then
+			cp "$file" "$path/../$temp_artist/$album"
+		fi
+	fi
+done
+if $complete && $process; then
+	if [[ $destination_path != "" ]]; then
+		dpath=$destination_path/$artist
+	else
+		dpath="$path/../$artist"
+	fi
+	echo "Successfully moved to " $dpath
+	mv "$path/../$temp_artist" "$dpath"
+	#rm -rf $path
+	echo "Completed!"
+elif ! $complete  &&  ! $process; then
+	echo "Didn't find any mp3 files in dir"
+elif $complete && ! $process; then
+	echo "Couldnt find mp3 tags"
+fi
+
+
+
+

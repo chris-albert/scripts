@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in *
+do
+	new=`echo $i | sed 's/ /%/g'`
+	mv "$i" "$new"
+	
+done
+

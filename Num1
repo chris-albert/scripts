@@ -1,0 +1,39 @@
+#!/bin/csh -f
+# Chris Albert
+# Final script 1, Num1
+# This is a c shell script to enter numbers into a file called numbers
+
+echo "This script is used to add lines to a file named 'numbers'"
+echo ""
+set letter = "b"
+while ($letter !~ [asmd])
+	echo -n "What letter would you like to put at the begining of the line?(a/s/m/d): "
+	set letter = $<
+end
+echo ""
+set num = "n"
+
+if ( $letter =~ [sd] ) then
+	while($num == "n")
+		echo -n "Enter exactly 2 numbers, separated by whitespace: "
+		set nums = $<
+		set numss = ( $nums )
+		if ( $#numss == 2 ) then
+			set num = "y"
+		endif
+	end
+else
+	while($num == "n")
+		echo -n "Enter as many numbers as you please, separated by whitspace: "
+		set nums = $<
+		set numss = ( $nums )
+		if ( $#numss >= 2 ) then
+			set num = "y"
+		endif
+	end
+endif
+
+
+echo $letter" "$nums >> numbers
+
+echo ""

@@ -1,0 +1,53 @@
+#!/bin/ksh
+# Chris Albert
+# Final script 3, Files1
+# This is a korn shell script that displays info about directory provided
+      
+path=${1:-empty}
+if [[ $path != "empty" ]]
+then
+	if [[ -d $path ]]
+	then
+		files=`ls $path`
+		integer dirCount
+		sizes=""
+		for file in $files
+		do
+			dirCount=$dirCount+1
+			size=`printf $file | wc -c`
+			sizes=$sizes" "$size
+		done
+		temps=$sizes
+		finalSize="0"
+		integer index
+		index=0
+		for nameSize in $sizes
+		do
+			integer count
+			count=0
+			for temp in $temps
+			do
+				sizes=""
+				if [[ $nameSize = $temp ]]
+				then
+					count=$count+1
+				fi
+			done
+			array[$index]=$nameSize" "$count
+			echo $count" file(s) with name-length "$nameSize >> temp
+
+			index=$index+1
+		done
+		cat temp | sort -u -r -n -k 5	
+		echo "Total files: "$dirCount
+		rm temp
+	else
+		echo "Argument supplied not directory!"
+		exit 1
+	fi
+else
+	echo "You must provide an argument!"
+	echo "Example:"
+	echo "Files1 /home/"
+	exit 2
+fi

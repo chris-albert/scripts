@@ -1,0 +1,12 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         MP4-Info
+version:      1.12
+version_from: Info.pm
+installdirs:  site
+requires:
+    Encode:                        0
+    IO::String:                    0
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.30

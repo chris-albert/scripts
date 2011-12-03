@@ -1,0 +1,25 @@
+#!/bin/bash
+# This script is used to put files website dir to ftp.creasetoph.com/creasetoph.com
+
+cp /home/creasetoph/website/creasetoph.com/classes/Database.php /home/creasetoph/website/creasetoph.com/classes/DatabaseBAK.php
+changeDatabaseToPublic
+echo "Connecting to server..."
+path=/home/creasetoph/website/creasetoph.com
+echo $path
+
+yafc <<**
+open ftp://creasetoph:564136ca1394@ftp.creasetoph.com
+cd creasetoph.com
+
+put -f -r $path/classes
+put -f -r $path/css
+put -f -r $path/inc
+put -f -r $path/js
+put -f -r $path/scripts
+
+put -f $path/*.php 
+
+
+close
+**
+cp /home/creasetoph/website/creasetoph.com/classes/DatabaseBAK.php /home/creasetoph/website/creasetoph.com/classes/Database.php

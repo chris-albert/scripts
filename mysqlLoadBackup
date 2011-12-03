@@ -1,0 +1,23 @@
+#!/bin/bash
+# this script loads the newest backup into local db
+files=`ls /home/creasetoph/website/dbBAK`
+# find newest file
+newest=0
+for file in $files
+do
+	date=`echo $file | awk -F_ '{print $3}'`
+	time=`echo $file | awk -F"[._]" '{print $4}'`
+	date=`echo $date | awk -F'-' '{print $3 $1 $2}'`
+	time=`echo $time | awk -F: '{print $1 $2 $3}'`
+	date=$date$time
+	if (( $date > $newest))
+	then
+		newest=$date
+		newestPath=$file
+	fi
+done
+# set up new path
+newestPath='/home/creasetoph/website/dbBAK/'$newestPath
+echo $newestPath
+# update localhost database
+mysql -ucreasetoph -p5c6r4e1a3s6e -h localhost creasetoph_db < $newestPath

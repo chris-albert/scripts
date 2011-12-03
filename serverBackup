@@ -1,0 +1,34 @@
+#!/bin/bash
+# This script is used to get files from ftp.creasetoph.com and backup on my computer
+
+echo "Connecting to server..."
+date=`date "+%m-%d-%Y_%H:%M:%S"`
+path=/home/creasetoph/website/backup/BAK_$date/
+echo $path
+mkdir $path
+
+dbPath=/home/creasetoph/website/dbBAK
+echo "Copying from ftp..."
+yafc <<**
+open ftp://creasetoph:564136ca1394@ftp.creasetoph.com
+
+cd mysqlBak
+get *.sql -a -o $dbPath
+
+cd ../creasetoph.com
+get classes -r -a -o $path
+get css -r -a -o $path
+get inc -r -a -o $path
+get js -r -a -o $path
+get scripts -r -a -o $path
+
+get *.php -a -o $path
+
+close
+**
+echo "Finished copying from ftp"
+echo "Copying files to localhost"
+# script to change public database login to private one
+changeDatabaseToPrivate
+echo "Loading most recent db"
+mysqlLoadBackup

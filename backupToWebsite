@@ -1,0 +1,23 @@
+#!/bin/bash
+# This script is used to move files from latest BAK to website dir
+
+dirs=`ls /home/creasetoph/website/backup/`
+newest=0
+for dir in $dirs
+do
+	date=`echo $dir | awk -F_ '{print $2}'`
+	time=`echo $dir | awk -F_ '{print $3}'`
+	date=`echo $date | awk -F'-' '{print $3 $2 $1}'`
+	time=`echo $time | awk -F: '{print $1 $2 $3}'`
+	date=$date$time
+	if (( $date > $newest))
+	then
+		newest=$date
+		newestPath=$dir
+	fi
+done
+echo 'Newest File: '$newestPath
+cd /home/creasetoph/website/backup/$newestPath
+echo 'Copying...'
+cp -r * /home/creasetoph/website/creasetoph.com
+echo 'Finished.'

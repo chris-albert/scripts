@@ -1,0 +1,144 @@
+#!/bin/sh
+# Chris Albert
+# Assignment 7, Due oct 28, a07
+# This script uses the bourne shell to view, add, modify, and delete user info
+
+viewEntry(){
+	echo -n "Who's information would you like to view: "
+	read person
+	grep '\<'"$person"'\>' ~/scripts/datebook > /dev/null
+	if [ "$?" = "0" ]
+	then
+	awk -F: 'BEGIN{print "Name:Phone Number:Address:Birthdate:Salary"} /^'"$person"'/{print $0}' ~/scripts/datebook | column -t -s:
+	else
+	echo "No information for provided name."
+	fi
+}
+# 1. Explain to user what this script will do
+echo "This script is used to view, add, modify, and delete user info"
+# 2. Display menu
+entry="1"
+while [ "$entry" != "6" ]
+do
+echo
+cat <<finish
+MENU
+-----------------------
+[1] display names
+[2] view specific entry
+[3] add entry
+[4] modify entry
+[5] delete entry
+[6] exit
+finish
+
+# 3. ask user for a choice
+echo -n "Please choose an action: "
+read entry
+echo 
+# 4. use case to process users request
+
+case "$entry" in
+1)	
+	# Display Names-------------------------------------
+	awk -F'[: ]' '{print $1" "$2}' ~/scripts/datebook | column -t | sort -k2
+	records=`awk 'END{print NR}' ~/scripts/datebook`
+	echo
+	echo "There are $records names"
+	;;
+2) 	
+	# View specific entry-------------------------------
+	viewEntry
+	;;
+3)
+	# Add entry-----------------------------------------
+	keepGoing="y"
+	while [ "$keepGoing" = "y" ]
+	do
+	echo -n "Enter name: "
+	read name
+	echo -n "Enter phone number: "
+	read pNumber
+	echo -n "Enter address: "
+	read address
+	echo -n "Enter date of birth: "
+	read dob
+	echo -n "Enter salary: "
+	read salary
+	echo $name":"$pNumber":"$address":"$dob":"$salary >> ~/scripts/datebook
+	echo -n "Add another: (y/n): "
+	read keepGoing
+	echo
+	done
+	;;
+4)
+	# Modify entry----------------------------------------
+	keepGoing="y"
+	until [ "$keepGoing" != "y" ]
+	do
+	echo -n "Who's information would you like to change: "
+	read person
+	grep '\<'"$person"'\>' ~/scripts/datebook > /dev/null
+	if [ "$?" = "0" ]
+	then
+	awk -F: 'BEGIN{print "Name:Phone Number:Address:Birthdate:Salary"} /^'"$person"'/{print $0}' ~/scripts/datebook | column -t -s:
+	#get new info
+	echo -n "Enter new name: "
+	read newName
+	echo -n "Enter new phone number: "
+	read newPNumber
+	echo -n "Enter new address: "
+	read newAddress
+	echo -n "Enter new date of birth: "
+	read newDob
+	echo -n "Enter new salary: "
+	read newSalary
+	#write new data to file
+	echo $newName":"$newPNumber":"$newAddress":"$newDob":"$newSalary >> ~/scripts/datebook
+	#delete line with old data
+	sed '/^'"$person"'/d' ~/scripts/datebook > tmp
+	mv tmp ~/scripts/datebook
+	echo -n "Modify another: (y/n): "
+	read keepGoing
+	echo
+	else
+	echo "No information for provided name."
+	fi
+	done
+	;;
+5)
+	#Delete entry------------------------------------------
+	for here in `cat datebook`
+	do
+	echo -n "Who's information would you like to delete: "
+	read person
+	grep '\<'"$person"'\>' ~/scripts/datebook > /dev/null
+	if [ "$?" = "0" ]
+	then
+	sed '/^'"$person"'/d' ~/scripts/datebook > tmp
+	mv tmp ~/scripts/datebook
+	echo $person"'s information was deleted."
+	else
+	echo "No information for provided name."
+	fi
+	#see if user want to delete another
+	echo -n "Delete another: (y/n): "
+	read keepGoing
+	if [ $keepGoing = "n" ]
+	then
+	break
+	fi
+	echo
+	
+	done
+	;;
+6)
+	;;
+*)
+	echo "Invalid entry."
+	;;
+esac
+done
+
+echo "Bye Bye"
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+#This is a script to kill and restart cairo dock when it acts up
+
+killall cairo-dock
+sleep 1
+cairo-dock -oa > /dev/null & 

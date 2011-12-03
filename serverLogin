@@ -1,0 +1,4 @@
+#!/bin/bash
+# this script opens an ssh connection to my server
+
+ssh -p 222 10.10.10.11

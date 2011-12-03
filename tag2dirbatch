@@ -1,0 +1,11 @@
+#!/bin/bash
+#this script is used to call tag2dir recursively on a dir
+
+find "`pwd`" -type d | while read file;
+do
+	if [[ "$file" != "`pwd`" ]]; then
+		tag2dir "$file"
+		echo
+	fi
+done
+

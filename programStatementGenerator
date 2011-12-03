@@ -1,0 +1,10 @@
+#!/bin/bash
+# this script is used to create programing statements with different variable names
+for letter in a b c d e f g h i j k l m n o p q r s t u v w x y z
+do
+	statement=$letter".wav "$letter".au"
+	ffmpeg -i $letter.wav $letter.au
+done
+echo
+
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+# net statistics
+
+activeCon=`netstat -ta | awk '/ESTABLISHED$/{count++}END{print count}'`
+outCon=`netstat -ta | awk '$3 > 0{count++}END{print count}'`
+inCon=`netstat -ta | awk '$2 > 0{count++}END{print count}'`
+echo $activeCon

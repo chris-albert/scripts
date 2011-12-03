@@ -1,0 +1,5 @@
+#!/bin/bash
+# this script opens an ssh connection to the cnet147 server for shell/scripting class
+
+ssh -l alch6 -p 2146 207.62.192.216
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+#this script is used to turn off the monitors
+sleep 2
+xset dpms force off

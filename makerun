@@ -1,0 +1,10 @@
+#!/bin/bash
+#this script will build c++ source and if it succeds it will run the output file
+echo "Running make file..."
+make
+if [[ $? -eq 0 ]]; then
+    echo
+    echo "Running output file: "
+    ./out
+fi
+

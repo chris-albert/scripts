@@ -1,0 +1,26 @@
+#!/bin/bash
+# Chris Albert
+# Final script 4, Files4
+# This is a bash shell script that display info about city selected
+
+PS3="Choose a city from above: "
+select choice in "San Francisco" "Berkely" "San Jose" "Fremont" "Exit"
+do
+	case $choice in
+	"San Francisco")
+		echo "You like the big city ehh?"
+		break;;
+	"Berkely")
+		echo "You like the laid back crowd huh?"
+		break;;
+	"San Jose")
+		echo "Are you a nerd"
+		break;;
+	"Fremont")
+		echo "Your close to me, woohoo!"
+		break;;
+	"Exit")
+		exit 0
+	esac
+
+done

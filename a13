@@ -1,0 +1,143 @@
+#!/bin/bash
+# Chris Albert
+# Assignment 13, Due dec 16, a13
+# This script uses the bash shell to calculate income tax and display in nice table
+function calcTax {
+	tax=`awk -v x=$1 -v y=$2 -v z=$3 -v p=$4 'BEGIN{printf "%.2f",x+((y-z)*p)}'`
+	echo $tax
+}
+function isInteger {
+   printf "%d" $1 > /dev/null 2>&1
+   echo $?
+}
+declare -i count
+count=1
+isDone="y"
+while [[ "$isDone" != "n" ]]
+do
+cat << FINISH
+Enter filling status: 
+-----------------------
+[x] Single, married/RDP filing separately
+[y] Married/RDP filing jointly and qualifying widow(er) with dependent child
+[z] Unmarried head of household
+FINISH
+
+status="a"	
+while [[ "$status" != [xyz] ]]
+do
+	echo -n "Enter choice(x/y/z): "
+	read status
+done
+echo
+
+income=0
+while (( $income < 1 || $income > 1000000))
+do
+	int=1
+	while [[ "$int" == "1" || $income == "" ]]
+	do
+		echo -n "Enter taxable income(Between \$1 and \$1,000,000): $"
+		read income
+		int=`isInteger $income`
+	done
+done
+
+case "$status" in
+x)
+	if (( $income > 0 && $income <= 7168 ))
+	then
+		tax=$(calcTax 0 $income 0 .01)
+	elif (( $income > 1768 && $income <= 16994))
+	then
+		tax=$(calcTax 71.68 $income 7168 .02)
+	elif (( $income > 16994 && $income <= 26821))
+	then
+		tax=$(calcTax 268.20 $income 16944 .04)
+	elif (( $income > 26821 && $income <= 37233))
+	then
+		tax=$(calcTax 661.28 $income 26821 .06)
+	elif (( $income > 37233 && $income <= 47055))
+	then
+		tax=$(calcTax 1286 $income 37233 .08)
+	else
+		tax=$(calcTax 2071.76 $income 47055 .093)
+	fi
+	;;
+y)
+	if (( $income > 0 && $income <= 14336 ))
+	then
+		tax=$(calcTax 0 $income 0 .01)
+	elif (( $income > 14336 && $income <= 33988))
+	then
+		tax=$(calcTax 143.36 $income 14336 .02)
+	elif (( $income > 33988 && $income <= 53642))
+	then
+		tax=$(calcTax 536.40 $income 33988 .04)
+	elif (( $income > 53642 && $income <= 74466))
+	then
+		tax=$(calcTax 1322.56 $income 53642 .06)
+	elif (( $income > 74466 && $income <= 94110))
+	then
+		tax=$(calcTax 2572 $income 74466 .08)
+	else
+		tax=$(calcTax 4143.52 $income 94110 .093)
+	fi
+	;;
+z)
+	if (( $income > 0 && $income <= 14345 ))
+	then
+		tax=$(calcTax 0 $income 0 .01)
+	elif (( $income > 14345 && $income <= 33989))
+	then
+		tax=$(calcTax 143.45 $income 14345 .02)
+	elif (( $income > 33989 && $income <= 43814))
+	then
+		tax=$(calcTax 536.33 $income 33989 .04)
+	elif (( $income > 43814 && $income <= 54225))
+	then
+		tax=$(calcTax 929.33 $income 43814 .06)
+	elif (( $income > 54225 && $income <= 64050))
+	then
+		tax=$(calcTax 1553.99 $income 54225 .08)
+	else
+		tax=$(calcTax 2339.99 $income 64050 .093)
+	fi
+	;;
+esac
+echo "Tax: " $tax
+echo
+status[$count]=$status
+income[$count]=$income
+tax[$count]=$tax
+count=$count+1
+
+
+
+
+echo -n "Would you like to enter another(y/n) : "
+read isDone
+echo
+done
+
+declare -i i
+i=1
+total=${#status[*]}
+
+while (( $i < $total ))
+do
+	if (( $i == 1 ))
+	then
+		string=${status[$i]}" "${income[$i]}" "${tax[$i]}
+	else
+		string=$string":"${status[$i]}" "${income[$i]}" "${tax[$i]}
+	fi
+	i=$i+1
+done
+echo "This is the summary of the tax queries you have made this session."
+printf "|%-10s|%-10s|%-10s|\n" "Status" "Income" "Tax"
+echo "----------------------------------"
+echo $string | awk 'BEGIN{RS=":"}{printf "|%-10s|%-10s|%10.2f|\n",$1,$2,$3}' | sort -k1,2
+echo
+
+

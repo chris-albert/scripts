@@ -1,0 +1,62 @@
+#!/bin/sh
+# Chris Albert
+# Final script 2, Num2
+# This is a bourne shell script to perform aritmetic on entries in a file names numbers
+
+cat numbers | while read line
+do
+	set $line
+	case "$1" in
+	"a")
+		echo -n "The sum of "
+		i=0
+		sum=0
+		count=$#
+		count=`expr $count - 1`
+		for letter in $line
+		do
+			if [ $i -ne 0 ]
+			then
+				if [ $i -eq  $count ]
+				then
+					echo -n $letter
+				else
+					echo -n $letter", "
+				fi
+				sum=`expr $sum + $letter`	
+			fi
+			i=`expr $i + 1`
+		done
+		echo " is "$sum
+		;;
+	"s")
+		diff=`expr $2 - $3`
+		echo "The difference of "$2" and "$3" is "$diff
+		;;
+	"m")
+		echo -n "The product of "
+		i=0
+		prod=1
+		for letter in $line
+		do
+			if [ $i -ne 0 ]
+			then
+				if [ $i -eq  $count ]
+				then
+					echo -n $letter
+				else
+					echo -n $letter", "
+				fi
+				prod=`expr $prod \* $letter`		
+			fi
+			i=`expr $i + 1`
+		done
+		echo " is " $prod
+		;;
+	"d")
+		quot=`expr $2 / $3`
+		echo "The quotient of "$2" and "$3" is "$quot
+		;;
+	esac
+done 
+

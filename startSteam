@@ -1,0 +1,5 @@
+#!/bin/bash
+WINEDEBUG=fixme-all wine C:/Program\ Files/Steam/Steam.exe -fullscreen \
+    -width 1140 -height 900 -applaunch 220 \
+    -heapsize 512000 +map_background none "$@"
+

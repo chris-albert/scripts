@@ -1,0 +1,46 @@
+# awk script to get network connections
+
+BEGIN{ 
+delugeIn = 0
+delugeOut = 0
+firefox = 0
+ftp = 0
+thunderbird = 0
+ssh = 0
+java = 0
+other = 0
+}
+
+{if ($6 ~ /deluge/){
+	{if ($4 ~ /61352/ || $4 ~ /61353/ $4 ~ /61354/ ||$4 ~ /61355/ || $4 ~ /61356/ || $4 ~ /61357/ || $4 ~ /61358/ ||  $4 ~ /61359/ || $4 ~ /61360/ || $4 ~ /61361/ || $4 ~ /61362/){
+		{delugeIn++}
+	}else{
+		{delugeOut++}
+	}}
+}else if ($6 ~ /firefox/){
+	firefox++
+}else if ($6 ~ /ftp/){
+	ftp++
+}else if ($6 ~ /thunderbird/){
+	thunderbird++
+}else if ($6 ~ /java/){
+	java++
+}else if ($6 ~ /ssh/){
+	ssh++
+}else{
+	other++	
+}}
+
+END{
+{printf "      Total: %2d\n", delugeIn + delugeOut + firefox + thunderbird + ftp + other}
+{printf "        Ftp: %2d\n", ftp}
+{printf "        ssh: %2d\n", ssh}
+{printf "        Java: %2d\n", java}
+{printf "    Firefox: %2d\n", firefox}
+{printf "  Deluge In: %2d\n", delugeIn}
+{printf " Deluge Out: %2d\n", delugeOut}
+{printf "Thunderbird: %2d\n", thunderbird}
+{printf "      Other: %2d\n", other}
+
+}
+

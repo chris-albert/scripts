@@ -1,0 +1,152 @@
+#!/bin/ksh
+# Chris Albert
+# Assignment 11 part 2, Due Dec 2, a11b
+# This is a korn shell script that
+
+# 1. Ask the user for the namw of a directory
+print -n "Enter directory name: "
+read directory
+#directory="/home/alch/cnet147/"
+files=$(ls $directory)
+
+integer total
+integer fileCount
+integer dirCount
+integer maxFileName
+for file in $files
+do
+	# 2. Determine the size of each file in the directory
+	dir=$directory"/"$file
+	if [[ -f $dir ]]
+	then	
+		fileCount=$fileCount+1
+	else
+		dirCount=$dirCount+1
+	fi
+	s=$(stat -c %s $dir)
+	if (( $total == 0 ))
+	then	
+		string=$file":"$s
+	else
+		string=$string" "$file":"$s
+	fi
+	total=$total+1
+	# find longest file name
+	temp=`printf $file | wc -c`
+	if (( $temp > $maxFileName ))
+	then
+		maxFileName=$temp
+	fi
+done
+
+# 3. Ask the user what he considers a big file
+echo -n "What do you consider a big file or directory?: "
+read size
+
+# 4. Identify if the file is big or small
+integer smallCount
+integer bigCount
+for file in $string
+do
+	fileSize=`echo $file | awk -F":" '{print $2}'`
+	fileName=`echo $file | awk -F":" '{print $1}'`
+	if (($fileSize > $size ))
+	then
+		bigName[bigCount]=$fileName
+		bigSize[bigCount]=$fileSize
+		# sory array
+		integer i
+		i=1
+		while (( $i < $bigCount ))
+		do
+			if (( ${bigSize[$bigCount]} < ${bigSize[$i - 1]} ))
+			then
+				tempSize=${bigSize[$i - 1]}
+				tempName=${bigName[$i - 1]}
+				bigSize[$i - 1]=${bigSize[$bigCount]}
+				bigName[$i - 1]=${bigName[$bigCount]}
+				bigSize[$bigCount]=$tempSize
+				bigName[$bigCount]=$tempName
+			fi
+			i=$i+1
+		done
+ 		bigCount=$bigCount+1
+	else	
+		smallName[smallCount]=$fileName
+		smallSize[smallCount]=$fileSize
+		# sort array
+		i=1
+		while (( $i < $smallCount ))
+		do
+			if (( ${smallSize[$smallCount]}  < ${smallSize[$i - 1]} ))
+			then
+				tempSize=${smallSize[$i - 1]}
+				tempName=${smallName[$i - 1]}
+				smallSize[$i - 1]=${smallSize[$smallCount]}
+				smallName[$i - 1]=${smallName[$smallCount]}
+				smallSize[$smallCount]=$tempSize
+				smallName[$smallCount]=$tempName
+			fi
+			i=$i+1
+		done
+		smallCount=$smallCount+1
+	fi
+done
+
+# Display nicely
+print
+print "This table contains files and directories from supplied argument"
+print "Author: Chris Albert"
+print "Directory: "$directory
+print "Current Date: "`date +%x`
+
+#make format string
+maxFileName=$maxFileName+1
+if (( $maxFileName < 11 ))
+then
+	maxFileName=11
+fi
+#make separator string
+i=0
+integer width
+width=$maxFileName*4
+width=$width+1
+while (( $i < $width ))
+do
+	separator=$separator"-"
+	i=$i+1
+done
+format="%-"$maxFileName"s%-"$maxFileName"s%-"$maxFileName"s%-"$maxFileName"s|\n"
+
+if (( $bigCount > $smallCount ))
+then
+	echo $separator
+        printf $format "|Big Name" "|Big Size" "|Small Name" "|Small Size"
+        echo $separator
+        integer i
+	i=0
+	while (( $i < $bigCount ))
+        do 
+		printf $format "|"${bigName[$i]} "|"${bigSize[$i]} "|"${smallName[$i]} "|"${smallSize[$i]}
+		i=$i+1
+        done
+	echo $separator
+else
+	echo $separator
+        printf $format "|Small Name" "|Small Size" "|Big Name" "|Big Size" 
+        echo $separator
+        integer i
+        i=0
+	while (( $i < $smallCount ))
+        do
+          	printf $format "|"${smallName[$i]} "|"${smallSize[$i]} "|"${bigName[$i]} "|"${bigSize[$i]} 
+                i=$i+1
+        done
+	echo $separator
+
+fi
+print "Total Big: "$bigCount
+print "Total Small: "$smallCount
+print "Total Files: "$fileCount
+print "Total Directories: "$dirCount
+print "Total: "$total

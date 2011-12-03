@@ -1,0 +1,5 @@
+#!/bin/bash
+# this script backs up the database to the mysqlBak dir
+cd /home/creasetoph/website/dbBAK
+suffix=$(date +%m-%d-%Y_%H:%M:%S)
+mysqldump --opt -ucreasetoph -p5c6r4e1a3s6e -h mysql.creasetoph.com creasetoph_db > db_BAK_$suffix.sql

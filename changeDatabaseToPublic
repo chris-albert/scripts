@@ -1,0 +1,7 @@
+#!/bin/bash
+#this script will change 2 lines in the database file
+
+sed 's/localhost/mysql.creasetoph.com/' /home/creasetoph/website/creasetoph.com/classes/Database.php > temp
+rm /home/creasetoph/website/creasetoph.com/classes/Database.php
+cp temp /home/creasetoph/website/creasetoph.com/classes/Database.php
+rm temp
